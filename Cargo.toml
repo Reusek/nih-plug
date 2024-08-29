@@ -89,9 +89,9 @@ log = { version = "0.4", features = ["std", "release_max_level_info"] }
 midi-consts = "0.1"
 nih_log = "0.3.1"
 parking_lot = "0.12"
-raw-window-handle = "0.5"
-serde = { version = "1.0", features = ["derive"] }
-serde_json = "1.0"
+raw-window-handle = "0.6.2"
+serde = { version = "1.0.209", features = ["derive"] }
+serde_json = "1.0.127"
 widestring = "1.0.0-beta.1"
 
 # Used for the `assert_process_allocs` feature
@@ -100,7 +100,7 @@ assert_no_alloc = { git = "https://github.com/robbert-vdh/rust-assert-no-alloc.g
 # Used for the `standalone` feature
 # NOTE: OpenGL support is not needed here, but rust-analyzer gets confused when
 #       some crates do use it and others don't
-baseview = { git = "https://github.com/RustAudio/baseview.git", rev = "579130ecb4f9f315ae52190af42f0ea46aeaa4a2", features = ["opengl"], optional = true }
+baseview = { git = "https://github.com/RustAudio/baseview.git", features = ["opengl"], optional = true }
 # All the claps!
 clap = { version = "4.1.8", features = ["derive", "wrap_help"], optional = true }
 cpal = { version = "0.15", optional = true }
@@ -112,20 +112,20 @@ rtrb = { version = "0.2.2", optional = true }
 vst3-sys = { git = "https://github.com/robbert-vdh/vst3-sys.git", branch = "fix/drop-box-from-raw", optional = true }
 
 # Used for the `zstd` feature
-zstd = { version = "0.12.3", optional = true }
+zstd = { version = "0.13.2", optional = true }
 
 [dev-dependencies]
 approx = "0.5.1"
 
 [target.'cfg(all(target_family = "unix", not(target_os = "macos")))'.dependencies]
-libc = "0.2.124"
+libc = "0.2.158"
 
 [target.'cfg(target_os = "macos")'.dependencies]
 objc = "0.2.7"
-core-foundation = "0.9.3"
+core-foundation = "0.10.0"
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
-version = "0.44"
+version = "0.58.0"
 features = [
   "Win32_Foundation",
   "Win32_Graphics_Gdi",

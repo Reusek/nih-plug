@@ -1,9 +1,12 @@
 //! Traits for working with plugin editors.
 
-use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
+use raw_window_handle::{HandleError, HasRawWindowHandle, RawWindowHandle};
 use std::any::Any;
 use std::ffi::c_void;
+use std::num::NonZero;
 use std::sync::Arc;
+
+use std::ptr::NonNull;
 
 use crate::prelude::GuiContext;
 
@@ -91,22 +94,25 @@ pub enum ParentWindowHandle {
 }
 
 unsafe impl HasRawWindowHandle for ParentWindowHandle {
-    fn raw_window_handle(&self) -> RawWindowHandle {
+    fn raw_window_handle(&self) -> Result<RawWindowHandle, HandleError> {
         match *self {
             ParentWindowHandle::X11Window(window) => {
-                let mut handle = raw_window_handle::XcbWindowHandle::empty();
-                handle.window = window;
-                RawWindowHandle::Xcb(handle)
+                let handle = raw_window_handle::XcbWindowHandle::new(
+                    NonZero::new(window).ok_or(HandleError::Unavailable)?,
+                );
+                Ok(RawWindowHandle::Xcb(handle))
             }
             ParentWindowHandle::AppKitNsView(ns_view) => {
-                let mut handle = raw_window_handle::AppKitWindowHandle::empty();
-                handle.ns_view = ns_view;
-                RawWindowHandle::AppKit(handle)
+                let handle = raw_window_handle::AppKitWindowHandle::new(
+                    NonNull::new(ns_view).ok_or(HandleError::Unavailable)?,
+                );
+                Ok(RawWindowHandle::AppKit(handle))
             }
             ParentWindowHandle::Win32Hwnd(hwnd) => {
-                let mut handle = raw_window_handle::Win32WindowHandle::empty();
-                handle.hwnd = hwnd;
-                RawWindowHandle::Win32(handle)
+                let handle = raw_window_handle::Win32WindowHandle::new(
+                    NonZero::new(hwnd as _).ok_or(HandleError::Unavailable)?,
+                );
+                Ok(RawWindowHandle::Win32(handle))
             }
         }
     }
